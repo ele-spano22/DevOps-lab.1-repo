@@ -1,0 +1,130 @@
+openapi: 3.0.0
+info:
+  title: Student API
+  description: Simple student management API
+  version: 1.0.0
+servers:
+- url: https://virtserver.swaggerhub.com/tutorial/1.0.0
+  description: SwaggerHub API Auto Mocking
+paths:
+  /student/{student_id}:
+    get:
+      summary: Get a student
+      description: Returns a single student
+      operationId: get_student_by_id
+      parameters:
+      - name: student_id
+        in: path
+        description: The student ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Student"
+        "400":
+          description: Bad request
+        "404":
+          description: Not found
+      x-openapi-router-controller: swagger_server.controllers.default_controller
+    delete:
+      summary: Delete a student
+      description: Delete a single student
+      operationId: delete_student
+      parameters:
+      - name: student_id
+        in: path
+        description: The student ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Student deleted successfully
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: Student not found
+      x-openapi-router-controller: swagger_server.controllers.default_controller
+  /student:
+    post:
+      summary: Add a new student
+      description: Adds a student to the system
+      operationId: add_student
+      requestBody:
+        description: Student object to add
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Student"
+        required: true
+      responses:
+        "200":
+          description: Student created
+          content:
+            application/json:
+              schema:
+                type: integer
+                x-content-type: application/json
+        "400":
+          description: Invalid input
+        "409":
+          description: Student already exists
+      x-openapi-router-controller: swagger_server.controllers.default_controller
+components:
+  schemas:
+    Student:
+      required:
+      - first_name
+      - last_name
+      type: object
+      properties:
+        student_id:
+          type: integer
+          example: 14444593
+        first_name:
+          type: string
+          example: Elena
+        last_name:
+          type: string
+          example: Spano
+        grade_records:
+          type: array
+          items:
+            $ref: "#/components/schemas/GradeRecord"
+      example:
+        student_id: 14444593
+        last_name: Spano
+        grade_records:
+        - grade: 7.5
+          subject_name: Physics
+        - grade: 7.5
+          subject_name: Physics
+        first_name: Elena
+    GradeRecord:
+      required:
+      - grade
+      - subject_name
+      type: object
+      properties:
+        subject_name:
+          type: string
+          example: Physics
+        grade:
+          maximum: 10
+          minimum: 0
+          type: number
+          format: float
+          example: 7.5
+      example:
+        grade: 7.5
+        subject_name: Physics
+
