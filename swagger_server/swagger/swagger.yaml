@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  title: Student API
+  title: Student API TEST123
   description: Simple student management API
   version: 1.0.0
 servers:
