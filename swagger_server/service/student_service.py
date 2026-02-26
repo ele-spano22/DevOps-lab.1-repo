@@ -16,14 +16,18 @@ collection = db["students"]
 def add(student):
     student_dict = student.to_dict()
     student_dict.pop("student_id", None)
+    if "grade_records" not in student_dict or student_dict["grade_records"] is None:
+        student_dict["grade_records"] = []
 
     result = collection.insert_one(student_dict)
-
     student_dict["student_id"] = str(result.inserted_id)
+
     return student_dict, 201
 
 
 def get_by_id(student_id):
+    from bson.objectid import ObjectId
+
     student = collection.find_one({"_id": ObjectId(student_id)})
 
     if not student:
