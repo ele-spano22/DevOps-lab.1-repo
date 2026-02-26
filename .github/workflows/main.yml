@@ -13,10 +13,11 @@ jobs:
     - name: Build docker
       run: |
         docker build . -t $REPO_NAME/$IMAGE_NAME
-    - name: run docker
+    - name: Start services with docker-compose
       run: |
-        docker run -d -p 8080:8080 $REPO_NAME/$IMAGE_NAME:latest && \
-          docker ps && sleep 5
+        docker compose up -d
+        docker ps
+        sleep 15
 
     - name: "Check files existence"
       uses: andstor/file-existence-action@v2
