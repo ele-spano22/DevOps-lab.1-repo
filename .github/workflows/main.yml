@@ -13,11 +13,16 @@ jobs:
     - name: Build docker
       run: |
         docker build . -t $REPO_NAME/$IMAGE_NAME
-    - name: Start services with docker-compose
+    - name: Run services and tests
       run: |
-        docker compose up -d
-        docker ps
-        sleep 15
+        docker compose up -d --build
+        echo "Waiting for service..."
+        sleep 30
+        curl -f http://localhost:8080/tutorial/1.0.0/openapi.json
+        npx newman run postman/collection.json \
+          -e postman/environment.json \
+          --bail
+        docker compose down
 
     - name: "Check files existence"
       uses: andstor/file-existence-action@v2
