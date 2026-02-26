@@ -1,18 +1,23 @@
 services:
   student_service:
     build: .
-    container_name: student_service
-    restart: unless-stopped
-    depends_on:
-      - mongo
     environment:
       MONGO_URI: mongodb://mongo:27017
     ports:
       - "8080:8080"
+    depends_on:
+      - mongo
 
   mongo:
     image: mongo:4
-    container_name: mongo
-    restart: unless-stopped
-    ports:
-      - "27017:27017"
+
+  tester:
+    image: postman/newman:alpine
+    depends_on:
+      - student_service
+    volumes:
+      - ./postman:/etc/newman
+    command: >
+      run collection.json
+      -e environment.json
+      --env-var baseUrl=http://student_service:8080/tutorial/1.0.0
