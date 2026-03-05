@@ -5,9 +5,6 @@ from pymongo import MongoClient
 from bson.objectid import ObjectId
 from flask import abort
 
-
-db_dir_path = tempfile.gettempdir()
-db_file_path = os.path.join(db_dir_path, "students.json")
 MONGO_URI = os.getenv("MONGO_URI", "mongodb://mongodb:27017/")
 client = MongoClient(MONGO_URI)
 db = client["student_db"]
@@ -46,3 +43,18 @@ def delete(student_id):
         abort(404, "Student not found")
 
     return {}, 200
+
+def get_average_grade(student_id):
+    student = collection.find_one({"_id": ObjectId(student_id)})
+
+    if not student:
+        abort(404, "Student not found")
+
+    grades = student.get("grade_records", [])
+
+    if len(grades) == 0:
+        abort(404, "Student has no grades")
+
+    avg = sum(g["grade"] for g in grades) / len(grades)
+
+    return avg
